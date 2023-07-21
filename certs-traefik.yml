@@ -1,0 +1,4 @@
+tls:
+  certificates:
+    - certFile: /chemin/dans/container/mon.crt
+      keyFile: /chemin/dans/container/ma.key
