@@ -1,0 +1,15 @@
+  mstream:
+    image: lscr.io/linuxserver/mstream:latest
+    container_name: mstream
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - TZ=Europe/Paris
+    volumes:
+      - /home/artogg/web-vps-docker/mstream/data:/config
+      - /home/artogg/web-vps-docker/mstream/music:/music
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    networks:
+      - proxy
