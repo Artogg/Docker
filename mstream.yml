@@ -1,3 +1,5 @@
+version: "3"
+services:  
   mstream:
     image: lscr.io/linuxserver/mstream:latest
     container_name: mstream
@@ -6,10 +8,20 @@
       - PGID=1001
       - TZ=Europe/Paris
     volumes:
-      - /home/artogg/web-vps-docker/mstream/data:/config
-      - /home/artogg/web-vps-docker/mstream/music:/music
-    ports:
-      - 3000:3000
+      - /mstream/config:/config
+      - /mstream/music:/music
+    #ports:
+    #  - 443:3000
     restart: unless-stopped
-    networks:
-      - proxy
+    depends on:
+      - "traefik"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mstream.rule=Host(`mstream.pyrefox.fr`)"
+      - "traefik.http.routers.mstream.entrypoints=websecure"
+      - "traefik.http.routers.mstream.tls=true"
+      - "traefik.http.services.mstream.loadbalancer.server.port=3000"
+      - "traefik.http.routers.mstream.tls.certresolver: myresolver"
+
+networks:
+  - traefik
