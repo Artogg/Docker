@@ -16,14 +16,10 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
     networks:
       - traefik
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /root/docker/traefik/certs-traefik.yml:/etc/traefik/dynamic/certs-traefik.yml
-      - /root/docker/traefik/certs/:/etc/certs/
 
 networks:
   traefik:
-    external: true
