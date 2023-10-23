@@ -1,27 +1,26 @@
 version: "3"
-services:  
+services:
   mstream:
     image: lscr.io/linuxserver/mstream:latest
     container_name: mstream
     environment:
       - PUID=1001
-      - PGID=1001
+      - PGID=998
       - TZ=Europe/Paris
     volumes:
-      - /mstream/config:/config
-      - /mstream/music:/music
-    #ports:
-    #  - 443:3000
+      - /home/guts/docker/mstream/config:/config
+      - /home/guts/docker/mstream/music:/music
     restart: unless-stopped
-    depends on:
-      - "traefik"
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mstream.rule=Host(`mstream.pyrefox.fr`)"
-      - "traefik.http.routers.mstream.entrypoints=websecure"
-      - "traefik.http.routers.mstream.tls=true"
-      - "traefik.http.services.mstream.loadbalancer.server.port=3000"
-      - "traefik.http.routers.mstream.tls.certresolver: myresolver"
+      traefik.enable: true
+      traefik.http.routers.mstream.rule: Host(`mstream.pyrefox.fr`)
+      traefik.http.routers.mstream.entrypoints: websecure
+      traefik.http.routers.mstream.tls: true
+      traefik.http.services.mstream.loadbalancer.server.port: 3000
+      traefik.http.routers.mstream.tls.certresolver: myresolver
+    networks:
+      - "traefik"
 
 networks:
-  - traefik
+  traefik:
+    external: true
