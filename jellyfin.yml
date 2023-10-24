@@ -1,0 +1,27 @@
+version: "3"
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1001
+      - PGID=998
+    volumes:
+      - /home/guts/docker/jellyfin/config:/config
+      - /home/guts/docker/jellyfin/data/tvseries:/data/tvseries
+      - /home/guts/docker/pljellyfin/data/movies:/data/movies
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.portainer.rule: Host(`jellyfin.pyrefox.fr`)
+      traefik.http.routers.portainer.entrypoints: websecure
+      traefik.http.routers.portainer.tls: true
+      traefik.http.services.portainer.loadbalancer.server.port: 8096
+      traefik.http.routers.portainer.tls.certresolver: myresolver
+    networks:
+      - "traefik"
+
+networks:
+  traefik:
+    external: true
