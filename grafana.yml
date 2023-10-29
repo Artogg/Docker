@@ -1,0 +1,47 @@
+version: "3"
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    environment:
+      - PUID=1001
+      - PGID=998
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - /home/guts/grafana/prometheus/etc:/etc/prometheus
+      - /home/guts/grafana/prometheus/data:/prometheus
+    networks:
+      - "grafana"
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    #ports:
+    #  - 3000:3000
+    restart: unless-stopped
+    environment:
+      - PUID=1001
+      - PGID=998
+      - GF_SECURITY_ADMIN_USER=guts
+      - GF_SECURITY_ADMIN_PASSWORD=QPOwuWGjxKATjEui8HW8
+    volumes:
+      - /home/guts/docker/grafana/data:/etc/grafana/provisioning/datasources
+    labels:
+      traefik.enable: true
+      traefik.http.routers.grafana.rule: Host(`grafana.pyrefox.fr`)
+      traefik.http.routers.grafana.entrypoints: websecure
+      traefik.http.routers.grafana.tls: true
+      traefik.http.services.grafana.loadbalancer.server.port: 3000
+      traefik.http.routers.grafana.tls.certresolver: myresolver
+    networks:
+      - "grafana"
+      - "traefik"
+
+networks:
+  grafana:
+    external: true
+  traefik:
+    external: true
