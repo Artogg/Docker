@@ -1,0 +1,26 @@
+version: "3"
+services:
+  mstream:
+    image: lscr.io/linuxserver/mstream:latest
+    container_name: mstream
+    environment:
+      - PUID=
+      - PGID=
+      - TZ=Europe/Paris
+    volumes:
+      - /my/path/mstream/config:/config
+      - /my/path/mstream/music:/music
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.mstream.rule: Host(`mstream.domain.com`)
+      traefik.http.routers.mstream.entrypoints: websecure
+      traefik.http.routers.mstream.tls: true
+      traefik.http.services.mstream.loadbalancer.server.port: 3000
+      traefik.http.routers.mstream.tls.certresolver: myresolver
+    networks:
+      - "traefik"
+
+networks:
+  traefik:
+    external: true
