@@ -1,0 +1,47 @@
+version: "3"
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    environment:
+      - PUID=
+      - PGID=
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - /my/path/prometheus/etc:/etc/prometheus
+      - /my/path/prometheus/data:/prometheus
+    networks:
+      - "grafana"
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    #ports:
+    #  - 3000:3000
+    restart: unless-stopped
+    environment:
+      - PUID=
+      - PGID=
+      - GF_SECURITY_ADMIN_USER=MyUser
+      - GF_SECURITY_ADMIN_PASSWORD=MyHash
+    volumes:
+      - /my/path/grafana/data:/etc/grafana/provisioning/datasources
+    labels:
+      traefik.enable: true
+      traefik.http.routers.grafana.rule: Host(`grafana.domain.com`)
+      traefik.http.routers.grafana.entrypoints: websecure
+      traefik.http.routers.grafana.tls: true
+      traefik.http.services.grafana.loadbalancer.server.port: 3000
+      traefik.http.routers.grafana.tls.certresolver: myresolver
+    networks:
+      - "grafana"
+      - "traefik"
+
+networks:
+  grafana:
+    external: true
+  traefik:
+    external: true
