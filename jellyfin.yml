@@ -6,10 +6,10 @@ services:
     environment:
       - PUID=   #paste the puid/pgid of the docker user -> "id" command
       - PGID=
-    volumes:
-      - /my/path/jellyfin/config:/config
-      - /my/path//jellyfin/data/tvseries:/data/tvseries
-      - /my/path//jellyfin/data/movies:/data/movies
+    volumes: # modify your filepaths here
+      - /my/path/jellyfin/config:/config    
+      - /my/path/jellyfin/data/tvseries:/data/tvseries   
+      - /my/path/jellyfin/data/movies:/data/movies
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
     labels:
